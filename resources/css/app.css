@@ -1,0 +1,20 @@
+.task-delete:hover {
+    background-color: tomato;
+    transition: 0.7s;
+    cursor: pointer;
+}
+
+.task-edit:hover {
+    background-color: orange;
+    transition: 0.7s;
+    cursor: pointer;
+}
+
+.task-item {
+    display: flex !important;
+    justify-content: space-between;
+}
+
+.buttons {
+    display: flex;
+}
