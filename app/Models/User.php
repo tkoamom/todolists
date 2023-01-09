@@ -45,4 +45,8 @@ class User extends Authenticatable
     public function catalogs(){
         return $this->hasMany(Catalog::class);
     }
+
+    public function sharedCatalogs(){
+        return $this->belongsToMany(Catalog::class, 'shared_catalog');
+    }
 }

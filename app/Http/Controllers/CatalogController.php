@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Catalog;
 use App\Models\Item;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CatalogController extends Controller
 {
@@ -21,7 +23,13 @@ class CatalogController extends Controller
     public function index()
     {
         $catalogs = Catalog::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
-        return view('home', compact('catalogs'));
+        $shared_ids = DB::table('shared_catalog')->where('user_id', Auth::user()->id)->get('catalog_id')->toArray();
+        $id_arr = [];
+        foreach($shared_ids as $id){
+            $id_arr[] = $id->catalog_id;
+        }
+        $shared_catalogs = Catalog::whereIn('id', $id_arr)->get();
+        return view('home', compact('catalogs', 'shared_catalogs'));
     }
 
     /**
@@ -76,7 +84,16 @@ class CatalogController extends Controller
      */
     public function show($id)
     {
-        $catalog = Catalog::where('id', $id)->where('user_id', Auth::user()->id)->firstOrFail();
+        $catalog = Catalog::where('id', $id)->where('user_id', Auth::user()->id)->first();
+        if (!$catalog){
+            $shared_catalogs = DB::table('shared_catalog')->where('catalog_id', $id)->where('user_id', Auth::user()->id)->first();
+            if ($shared_catalogs){
+                $catalog = Catalog::where('id', $id)->firstOrFail();
+            }
+            else{
+                abort(404);
+            }
+        }
         $items = Item::where('catalog_id', $id)->get();
         return view('show_catalog', compact('catalog', 'items'));
     }
@@ -141,5 +158,26 @@ class CatalogController extends Controller
         $catalog = Catalog::where('id', $id)->where('user_id', Auth::user()->id)->firstOrFail();
         $catalog->delete();
         return redirect()->route('catalog.index')->with('success', 'To do list deleted successfully');
+    }
+
+    /**
+     * Share the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function share(Request $request, $id)
+    {
+        $catalog = Catalog::where('id', $id)->first();
+        $catalog->shared = true;
+        $catalog->save();
+        $user = User::where('email', $request->share_email)->first();
+        if ($user){
+            $catalog->sharedUsers()->attach($user);
+        }
+        else{
+            return back()->withErrors('User not found');
+        }
+        return redirect()->route('catalog.index')->with('success', 'List shared successfully!');
     }
 }

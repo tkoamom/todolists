@@ -12,9 +12,14 @@ class Catalog extends Model
     protected $fillable = [
         'title',
         'description',
+        'shared',
     ];
 
     public function user(){
         return $this->belongsTo(User::class);
+    }
+
+    public function sharedUsers(){
+        return $this->belongsToMany(User::class, 'shared_catalog');
     }
 }

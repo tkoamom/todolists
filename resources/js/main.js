@@ -63,8 +63,13 @@ $(document).ready(function(){
 		$('.task-item').remove();
 		if(items.length > 0) {
 			for(var i = 0; i < items.length; i++) {
-				$('.task-list').append('<li class= "list-group-item task-item">' + items[i] + '<div class="buttons"><div class="task-edit" data-bs-toggle="modal" data-bs-target="#editModal"><a class="btn btn-sm btn-outline-warning"><i class="fa-solid fa-pen-to-square"></i></a></div><div class="task-delete"><a class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-xmark"></i></a></div></div></li>');
-			}
+                if (items[i] === ''){
+                    items.splice(i,1)
+                }
+                else {
+                    $('.task-list').append('<li class= "list-group-item task-item">' + items[i] + '<div class="buttons"><div class="task-edit" data-bs-toggle="modal" data-bs-target="#editModal"><a class="btn btn-sm btn-outline-warning"><i class="fa-solid fa-pen-to-square"></i></a></div><div class="task-delete"><a class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-xmark"></i></a></div></div></li>');
+                }
+            }
 		}
         $('input[name="tasks"]').val(items.join('&and'))
 	};
@@ -98,6 +103,24 @@ $(document).ready(function(){
 
         modalTitle.textContent = `Are you sure you want to delete this To do list ` + id + ' ?'
         $('#delete_list').attr('action', modalBodyFormAction.slice(0, -id.length) + id);
+    })
+
+    const shareModal = document.getElementById('shareModal')
+
+    shareModal.addEventListener('show.bs.modal', event => {
+        // Button that triggered the modal
+        const button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        const id = button.getAttribute('data-bs-id')
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        const modalBodyForm = shareModal.querySelector('#share_list')
+        const modalBodyFormAction = modalBodyForm.getAttribute('action')
+        console.log(modalBodyFormAction)
+
+        $('#share_list').attr('action', modalBodyFormAction.slice(0, -id.length) + id);
     })
 
 

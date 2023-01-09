@@ -45,12 +45,32 @@
                                 <td scope="row"><a href="{{ route('catalog.show', $catalog->id) }}" style="color: black">{{ $catalog->title }}</a></td>
                                 <td>
                                     <a href="{{ route('catalog.edit', $catalog->id) }}" class="btn btn-sm btn-outline-success"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a href="" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#shareModal" data-bs-id="{{$catalog->id}}"><i class="fa-solid fa-share-from-square"></i></a>
                                     <a href="" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-id="{{$catalog->id}}"><i class="fa-solid fa-xmark"></i></a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 No To do lists!
+                            </tr>
+                        @endforelse
+                        </tbody>
+                    </table>
+
+                    <table class="table table-hover table-borderless">
+                        <thead>
+                        <th scope="col">Shared To do lists</th>
+                        <th scope="col"></th>
+                        </thead>
+                        <tbody>
+                        @forelse ($shared_catalogs as $catalog)
+                            <tr>
+                                <td scope="row"><a href="{{ route('catalog.show', $catalog->id) }}" style="color: black">{{ $catalog->title }}</a></td>
+                                <td></td>
+                            </tr>
+                        @empty
+                            <tr>
+                                No Shared To do lists!
                             </tr>
                         @endforelse
                         </tbody>
@@ -76,6 +96,28 @@
                 </form>
                 <button type="button" class="btn btn-default pull-right" data-bs-dismiss="modal">Cancel</button>
             </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="shareModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Who do you want to share with?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" id="share_list" action="{{route('share', 1)}}">
+                @csrf
+                <div class="modal-body">
+                    <input id="share_catalog_user" name="share_email" class="form-control" type="email" placeholder="User login (example@example.com)">
+                </div>
+
+                <div class="modal-footer">
+                        <button type="submit" class="btn btn-success pull-right">Share</button>
+                    <button type="button" class="btn btn-default pull-right" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
 
         </div>
     </div>

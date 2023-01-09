@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CatalogController;
+use App\Models\Catalog;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,3 +26,5 @@ Route::get('/home', function () {
 });
 
 Route::resource('catalog', 'App\Http\Controllers\CatalogController');
+
+Route::post('/catalog/share/{id}', [CatalogController::class, 'share'])->name('share');
