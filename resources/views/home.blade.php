@@ -17,6 +17,22 @@
                             {{ session('status') }}
                         </div>
                     @endif
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    @if(session()->has('success'))
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-bs-dismiss="alert">×</button>
+                            {{ session()->get('success') }}
+                        </div>
+                    @endif
 
                     <table class="table table-hover table-borderless">
                         <thead>
@@ -24,17 +40,43 @@
                             <th scope="col"></th>
                         </thead>
                         <tbody>
+                        @forelse ($catalogs as $catalog)
                             <tr>
-                                <td>1111</td>
+                                <td scope="row"><a href="{{ route('catalog.show', $catalog->id) }}" style="color: black">{{ $catalog->title }}</a></td>
                                 <td>
-                                    <a href="" class="btn btn-sm btn-outline-warning">Edit</a>
-                                    <a href="" class="btn btn-sm btn-outline-danger">Delete</a>
+                                    <a href="{{ route('catalog.edit', $catalog->id) }}" class="btn btn-sm btn-outline-success"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a href="" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-id="{{$catalog->id}}"><i class="fa-solid fa-xmark"></i></a>
                                 </td>
                             </tr>
+                        @empty
+                            <tr>
+                                No To do lists!
+                            </tr>
+                        @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Are you sure you want to delete this To do list?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-footer">
+                <form method="POST" id="delete_list" action="{{route('catalog.destroy', 1)}}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger pull-right" data-bs-dismiss="modal">Delete</button>
+                </form>
+                <button type="button" class="btn btn-default pull-right" data-bs-dismiss="modal">Cancel</button>
+            </div>
+
         </div>
     </div>
 </div>

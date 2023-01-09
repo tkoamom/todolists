@@ -1,11 +1,14 @@
 $(document).ready(function(){
 
-	var items = getFromLocal('memos');
+    if (window.location.href.includes('catalog/')){
+        var items = $('input[name="tasks"]').val().split('&and');
+        loadList(items);
+    }
 	var index;
-	loadList(items);
 	// if input is empty disable button
 	$('#task-list-button').prop('disabled', true);
-	$('#task-add-input').keyup(function(){
+	$('#task-add-input').keyup(function(event){
+        event.preventDefault();
 		if($(this).val().length !== 0) {
 			$('#task-list-button').prop('disabled', false);
 		} else {
@@ -15,6 +18,7 @@ $(document).ready(function(){
 	// bind input enter with button submit
 	$('#task-add-input').keypress(function(e){
 		if(e.which === 13) {
+            e.preventDefault();
 			if ($('#task-add-input').val().length !== 0)
 				$('#task-list-button').click();
 		}
@@ -59,7 +63,7 @@ $(document).ready(function(){
 		$('.task-item').remove();
 		if(items.length > 0) {
 			for(var i = 0; i < items.length; i++) {
-				$('.task-list').append('<li class= "list-group-item task-item">' + items[i] + '<div class="buttons"><div class="task-edit" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fa-solid fa-pen-to-square"></i></div><div class="task-delete"><i class="fa-solid fa-xmark"></i></div></div></li>');
+				$('.task-list').append('<li class= "list-group-item task-item">' + items[i] + '<div class="buttons"><div class="task-edit" data-bs-toggle="modal" data-bs-target="#editModal"><a class="btn btn-sm btn-outline-warning"><i class="fa-solid fa-pen-to-square"></i></a></div><div class="task-delete"><a class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-xmark"></i></a></div></div></li>');
 			}
 		}
         $('input[name="tasks"]').val(items.join('&and'))
@@ -75,5 +79,26 @@ $(document).ready(function(){
 		else
 			return [];
 	}
+
+    const deleteModal = document.getElementById('deleteModal')
+
+    deleteModal.addEventListener('show.bs.modal', event => {
+        // Button that triggered the modal
+        const button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        const id = button.getAttribute('data-bs-id')
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        const modalTitle = deleteModal.querySelector('.modal-title')
+        const modalBodyForm = deleteModal.querySelector('#delete_list')
+        const modalBodyFormAction = modalBodyForm.getAttribute('action')
+        console.log(modalBodyFormAction)
+
+        modalTitle.textContent = `Are you sure you want to delete this To do list ` + id + ' ?'
+        $('#delete_list').attr('action', modalBodyFormAction.slice(0, -id.length) + id);
+    })
+
 
 });

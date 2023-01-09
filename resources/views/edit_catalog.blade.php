@@ -6,7 +6,7 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        Add To Do List
+                        Edit To Do List
                     </div>
                     <h5 class="card-header">
                         <a href="{{ route('catalog.index') }}" class="btn btn-sm btn-outline-primary"></i> Go Back</a>
@@ -31,13 +31,14 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('catalog.store') }}">
+                        <form method="POST" action="{{ route('catalog.update', $catalog->id) }}">
                             @csrf
+                            @method('PUT')
 
                             <div class="form-group row">
                                 <label for="title" class="col-form-label text-md-right">Title</label>
 
-                                <input id="title" type="title" class="form-control @error('title') is-invalid @enderror" name="title" required autocomplete="title" autofocus>
+                                <input id="title" type="title" class="form-control @error('title') is-invalid @enderror" value="{{$catalog->title}}" name="title" required autocomplete="title" autofocus>
 
                                 @error('title')
                                 <span class="invalid-feedback" role="alert">
@@ -49,7 +50,7 @@
                             <div class="form-group row">
                                 <label for="description" class="col-form-label text-md-right">Description</label>
 
-                                <textarea name="description" id="description" cols="30" rows="10" class="form-control" autocomplete="description"></textarea>
+                                <textarea name="description" id="description" cols="30" rows="10" class="form-control" autocomplete="description">{{$catalog->description}}</textarea>
 
                                 @error('description')
                                 <span class="invalid-feedback" role="alert">
@@ -62,7 +63,7 @@
                                 <label>Tasks to do</label>
                                 <ul class="list-group task-list">
                                 </ul>
-                                <input type="hidden" name="tasks">
+                                <input type="hidden" name="tasks" value="{{$items_string}}">
                             </div>
 
                             <div class="form-group">
@@ -86,7 +87,7 @@
                 </div>
             </div>
 
-    </div>
+        </div>
     </div>
     <div class="modal fade" id="editModal" role="dialog">
         <div class="modal-dialog" role="document">
